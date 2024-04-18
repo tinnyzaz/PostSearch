@@ -1,3 +1,7 @@
+# PostSearch - A simple Python application to search through your old
+# Tweets and Threads Posts from downloaded archive files.
+# Author: Tinda Zaszcek
+# Link: https://github.com/tinnyzaz/PostSearch
 # gui.py
 
 import tkinter as tk
