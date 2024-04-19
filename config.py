@@ -35,4 +35,12 @@ show_archived = False
 user_cfg = 'user.cfg'
 
 DEBUGGING = True
-VERBOSE = True
+VERBOSE = False
+FIRST_RUN = False
+
+# Define the variables that can be set in the user.cfg file to override
+# the defaults
+user_config_vars = {
+    "show_archived": show_archived,
+    "first_run": FIRST_RUN
+}

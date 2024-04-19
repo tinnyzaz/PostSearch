@@ -18,19 +18,17 @@ def main():
     check_first_run()
     debug.msg("Starting the main script...")
     # Connect to the database
-    try:
-        conn = sqlite3.connect(cfg.dbname)
-        db = conn.cursor()
-        db_conn = DatabaseConnection(conn, db)
+    # try:        
+    with DatabaseConnection() as db_conn:
         # Start the GUI script 
         debug.info("Starting the GUI...")
         gui = GUI(db_conn)
         debug.info("Closing GUI...")
         # Commit changes
-        conn.commit()
-    except Exception as e:
-        debug.error(f"An error occurred: {e}")
-    else:
+        db_conn.conn.commit()
+    # except Exception as e:
+    #     debug.error(f"101-An error occurred: {e}")
+    # else:
         debug.msg("Main script completed. Great job!")
 
 # ==============================================================================
