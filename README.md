@@ -1,5 +1,5 @@
-# PostSearch
-A simple Python application to search through your old tweets and posts.
+# PostSearch by Tinda Zaszcek v0.1.0
+A simple graphical user interface to search through your old posts.
 
 # About
 
@@ -10,8 +10,12 @@ gems on whatever new social media service you end up migrating to.
 Features:
     - Parse and organize old posts
     - Search post text
-    - View threaded posts
-    - ??
+    - TODO: View threaded posts
+    - TODO: Automatically import archive ZIP files from Twitter & Threads
+    - IDEA: Maybe some organizing features?
+    - IDEA: Editing the posts before copying them out?
 
-To do:
-    - This is a work in progress, it doesn't work yet!
+Note:
+    - This is a work in progress, it doesn't work very well yet!
+
+                    https://www.zaszcek.com
