@@ -142,7 +142,9 @@ class GUI:
         query = self.search_entry.get()
         if query:
             debug.msg(f"Searching for self.posts with: {query}")
-            self.posts = [post[0] for post in self.db_conn.get_posts(query)]
+            # self.posts = [post[2] for post in self.db_conn.get_posts(query)]
+            self.posts = self.db_conn.get_posts(query)
+            debug.msg(self.posts)
             debug.info(f"Found {len(self.posts)} posts with: {query}")
             # Show the first post
             self.show_post()
@@ -181,7 +183,7 @@ class GUI:
         # Check if the self.posts list is not empty
         if self.posts:
             # Insert the current post into the Text widget
-            self.post_text.insert(tk.END, self.posts[self.index])
+            self.post_text.insert(tk.END, self.posts[self.index][2])
             debug.msg(f"Showing post {self.index+1}/{len(self.posts)}")
             # Update the self.index info
             self.index_info.set(f"{self.index+1}/{len(self.posts)}")
