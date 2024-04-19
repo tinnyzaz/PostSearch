@@ -4,22 +4,38 @@
 # Link: https://github.com/tinnyzaz/PostSearch
 # debug.py
 
-from config import DEBUGGING, VERBOSE
+import os
+import inspect
 
-# define the debug function
-def debug(*args):
-    if DEBUGGING:
-        print("DEBUG:", *args)
+import config as cfg
 
-# define the verbose function
+def msg(*args):
+    if cfg.DEBUGGING:
+        print(f"{cfg.CYAN}DEBUG:{cfg.RESET}", *args)
+
 def verbose(*args):
-    if VERBOSE:
-        print("VERBOSE:", *args)
+    if cfg.VERBOSE:
+        print(f"{cfg.LIGHT_GRAY}VERBOSE:{cfg.RESET}", *args)
 
-# define the error function
+def warning(*args):
+    print(f"{cfg.PINK}WARNING:{cfg.RESET}", *args)
+
 def error(*args):
-    print("ERROR:", *args)
+    try:
+        # get frame info
+        frame_info = inspect.stack()[-1]
+        # get line number
+        lineno = frame_info.lineno
+        # get function name
+        script_name = os.path.basename(frame_info.filename)
+        error_location = f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args, f"at line {lineno} in {script_name}"
+        error_location = " ".join(error_location)
+        print(error_location)
+    except Exception as e:
+        print(f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args)
 
 def info(*args):
-    print("INFO:", *args)
+    print(f"{cfg.NEON_GREEN}INFO:{cfg.RESET}", *args)
 
+def first(*args):
+    msg("[FIRST RUN]:", *args)

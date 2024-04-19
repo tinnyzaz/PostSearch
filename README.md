@@ -1,5 +1,5 @@
 # PostSearch
-A simple Python application to search through your old
+A simple Python application to search through your old tweets and posts.
 
 # About
 
@@ -14,4 +14,4 @@ Features:
     - ??
 
 To do:
-    - ??
+    - This is a work in progress, it doesn't work yet!
