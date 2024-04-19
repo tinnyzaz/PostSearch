@@ -23,7 +23,7 @@ def warning(*args):
 def error(*args):
     try:
         # get frame info
-        frame_info = inspect.stack()[-1]
+        frame_info = inspect.stack()[0]
         # get line number
         lineno = frame_info.lineno
         # get function name
@@ -31,6 +31,7 @@ def error(*args):
         error_location = f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args, f"at line {lineno} in {script_name}"
         error_location = " ".join(error_location)
         print(error_location)
+        print(frame_info)
     except Exception as e:
         print(f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args)
 

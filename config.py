@@ -14,6 +14,9 @@ WINDOW_HEIGHT = 600
 ICON_PATH = "assets/postsearch.ico"
 WINDOW_TITLE = "PostSearch by Tinda Zaszcek v0.1.0"
 WINDOW_BORDER = "15px"
+TOP_BUTTON_WIDTH = 10
+BOTTOM_BUTTON_WIDTH = 12
+SIDE_BUTTON_WIDTH = 6
 
 # ANSI escape codes for colors
 CYAN = "\033[96m"

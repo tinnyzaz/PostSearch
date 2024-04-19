@@ -80,57 +80,76 @@ class GUI:
         self.search_entry.grid(row=0, column=1, columnspan=5, sticky='ew')
     
         # Create a Search button
-        self.search_button = tk.Button(self.window, text="Search", command=self.search_posts)
-        self.search_button.grid(row=0, column=6, sticky='e')
+        self.search_button = tk.Button(self.window, text="Search", width=cfg.TOP_BUTTON_WIDTH, command=self.search_posts)
+        self.search_button.grid(row=0, column=6, padx=6)
     
         # Create a Clear button
-        self.clear_button = tk.Button(self.window, text="Clear", command=self.clear_search)
-        self.clear_button.grid(row=0, column=7, sticky='e')
+        self.clear_button = tk.Button(self.window, text="Reset", width=cfg.TOP_BUTTON_WIDTH, command=self.clear_search)
+        self.clear_button.grid(row=0, column=7, sticky='w')
     
         # Label that will display the current post / total self.posts
         self.index_info = tk.StringVar()
         self.index_info.set("00000/00000")        
+        
         # Create a Label widget with the textvariable option set to the StringVar variable
         tk.Label(self.window, textvariable=self.index_info).grid(row=1, column=0, sticky='s')
+        
         # Label that will display the meta info on this post
         self.meta_info = tk.StringVar()
         self.meta_info.set("Meta Info")
         tk.Label(self.window, textvariable=self.meta_info).grid(row=1, column=1, columnspan=6, sticky='sw')
+
+        # SIDE BAR (LEFT) ============================================================
+        # Create the Side Bar Frame
+        self.side_bar_frame = tk.Frame(self.window)
+        self.side_bar_frame.grid(row=2, column=0, rowspan=1)
+
+        # Create a First Button
+        self.first_button = tk.Button(self.side_bar_frame, text="First", width=cfg.SIDE_BUTTON_WIDTH)
+        self.first_button.grid(row=0, column=0, sticky='s')
+
+        # Create a Last Button
+        self.last_button = tk.Button(self.side_bar_frame, text="Last", width=cfg.SIDE_BUTTON_WIDTH)
+        self.last_button.grid(row=1, column=0, sticky='s')
+        
+        # Create a Copy button
+        self.copy_button = tk.Button(self.side_bar_frame, text="Copy", command=lambda: copy_post(self.window, self.post_text.get()), width=cfg.SIDE_BUTTON_WIDTH)
+        self.copy_button.grid(row=2, column=0, sticky='s')
+
+        # SIDE BAR (RIGHT) ===========================================================
         # Label that will display whether the post is archived or not
         self.is_archived_label = tk.StringVar()
         self.is_archived_label.set("🐵")
         tk.Label(self.window, textvariable=self.is_archived_label, font=("Helvetica", 30)).grid(row=1, column=7, rowspan=2, sticky='n')
     
+        # MAIN CONTENT ==============================================================
         # Create a Text widget with word wrapping
         self.post_text = tk.Text(self.window, wrap=tk.WORD)
         self.post_text.grid(row=2, column=0, rowspan=2, columnspan=8)
     
+        # BOTTOM BAR ================================================================
         # Create a Previous button
-        self.previous_button = tk.Button(self.window, text="Previous", command=self.previous_post)
-        self.previous_button.grid(row=4, column=1, sticky='w')
-    
-        # Create a Copy button
-        self.copy_button = tk.Button(self.window, text="Copy", command=lambda: copy_post(self.window, self.post_text.get()))
-        self.copy_button.grid(row=4, column=2)
-    
+        self.previous_button = tk.Button(self.window, text="Previous", command=self.previous_post, width=cfg.BOTTOM_BUTTON_WIDTH)
+        self.previous_button.grid(row=4, column=1, sticky='sw')
+
         # Create an Archive button
         self.archive_button_text = tk.StringVar()
         self.archive_button_text.set("Hide Post")
-        self.archive_button = tk.Button(self.window, text=self.archive_button_text, command=self.archive_post)
-        self.archive_button.grid(row=4, column=3)
+        self.archive_button = tk.Button(self.window, text=f"{self.archive_button_text}", command=self.archive_post, width=cfg.BOTTOM_BUTTON_WIDTH)
+        self.archive_button.grid(row=4, column=3, sticky='s')
     
         # Create Refresh button
-        self.populate_posts_button = tk.Button(self.window, text="Refresh", command=self.populate_posts)
-        self.populate_posts_button.grid(row=4, column=4)
+        self.populate_posts_button = tk.Button(self.window, text="Refresh", command=self.populate_posts, width=cfg.BOTTOM_BUTTON_WIDTH)
+        self.populate_posts_button.grid(row=4, column=4, sticky='s')
     
         # Create a Show Thread button
-        self.show_thread_button = tk.Button(self.window, text="Show Thread")
-        self.show_thread_button.grid(row=4, column=5)
+        self.show_thread_button = tk.Button(self.window, text="Show Thread", width=cfg.BOTTOM_BUTTON_WIDTH)
+        self.show_thread_button.grid(row=4, column=5, sticky='s')
         self.show_thread_button.config(state=tk.DISABLED)
     
         # Create a Next button
-        self.next_button = tk.Button(self.window, text="Next", command=self.next_post)
-        self.next_button.grid(row=4, column=6, sticky='e')
+        self.next_button = tk.Button(self.window, text="Next", command=self.next_post, width=cfg.BOTTOM_BUTTON_WIDTH)
+        self.next_button.grid(row=4, column=6, sticky='se')
 
         # These checkbuttons are disabled for now, but will toggle user config options
         # Create a DEBUGGING Checkbutton widget
@@ -192,16 +211,6 @@ class GUI:
             debug.error(f"Error getting self.is_archived flag: {e}")
             return False
 
-    # Function to change the text of the Archive button
-    def archive_button_check(self, postarchived=False):
-        # TODO: this function is not working
-        self.archive_button.config(text="Unhide Post" if self.is_archived else "Hide Post")
-        if postarchived:
-            temp_text = "Show Post"
-        else:
-            temp_text = "Hide Post"
-        self.archive_button_text.set(f"{temp_text}")
-
     # Function to show the current post
     def show_post(self, which=0):
         # Clear the Text widget
@@ -215,7 +224,7 @@ class GUI:
             # Update the self.index info
             self.index_info.set(f"{self.index+1:05}/{len(self.posts):05}")
             # Update the meta info
-            postid = self.posts[self.index][0]
+            self.postid = self.posts[self.index][0]
             postdate = self.posts[self.index][1]
             postfavs = self.posts[self.index][3]
             postreply = self.posts[self.index][4]
@@ -225,12 +234,15 @@ class GUI:
                 postreplyto = f"| Reply to {postreply}"
             else:
                 postreplyto = ""
-            self.meta_info.set(f"ID: {postid} | {postdate} | 💜{postfavs} {postreplyto}")
-            # Update the Archive button text using 🙈 and 🐵
-            self.archive_button_check(postarchived)
+            self.meta_info.set(f"ID: {self.postid} | {postdate} | 💜{postfavs} {postreplyto}")
+            # Update the Archived label using 🙈 and 🐵
+            self.is_archived_label.set(f"{self.archived_icon_toggle(postarchived)}")
             debug.msg(f"Updated the labels")
         else:
             debug.msg("No posts to show.")
+
+    def archived_icon_toggle(self, is_archived):
+        return "🙈" if is_archived else "🐵"
 
     def next_post(self):
         # Increment the self.index
@@ -253,19 +265,22 @@ class GUI:
         self.show_post(self.index)
 
     def archive_post(self):
-        # Get the current post
-        current_post = self.posts[self.index]
         # Toggle the self.is_archived flag in the database
         try:
             # First, get the current state of self.is_archived for the post
-            self.db_conn.db.execute(f"SELECT self.is_archived FROM {cfg.table_name} WHERE full_text = ?", (current_post,))
+            self.db_conn.db.execute(f"SELECT is_archived FROM {cfg.table_name} WHERE id_str = ?", (self.postid,))
             self.is_archived = self.db_conn.db.fetchone()[0]
             # Then, toggle the self.is_archived flag
             self.is_archived = not bool(self.is_archived)
-            self.db_conn.db.execute(f"UPDATE {cfg.table_name} SET self.is_archived = ? WHERE full_text = ?", (self.is_archived, current_post))
+            self.db_conn.db.execute(f"UPDATE {cfg.table_name} SET is_archived = ? WHERE id_str = ?", (self.is_archived, self.postid))
             self.db_conn.conn.commit()
-            debug.msg(f"Toggled archive state for post: {current_post}")
+            debug.msg(f"Toggled archive state for post: {self.postid}")
             # Update the text of the Archive button
-            self.archive_button_text(self.is_archived)
+            self.archive_button_text_toggle()
         except sqlite3.Error as e:
             debug.error(f"Error toggling archive state for post: {e}")
+
+    # Function to change the text of the Archive button
+    def archive_button_text_toggle(self):
+        button_text = "Unhide Post" if self.is_archived else "Hide Post"
+        self.archive_button_text.set(button_text)
