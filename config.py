@@ -4,9 +4,16 @@
 # Link: https://github.com/tinnyzaz/PostSearch
 # config.py
 
+DEBUGGING = True
+VERBOSE = False
+FIRST_RUN = True
+SHOW_ARCHIVED = False
+
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 ICON_PATH = "assets/postsearch.ico"
+WINDOW_TITLE = "PostSearch by Tinda Zaszcek v0.1.0"
+WINDOW_BORDER = "15px"
 
 # ANSI escape codes for colors
 CYAN = "\033[96m"
@@ -30,17 +37,20 @@ fields = "id_str, created_at, full_text, favorite_count, in_reply_to_status_id_s
 archived_tweets_file = "data/tweets.js"     # the location of tweets.js in the archive
                                             # that will need to be converted to JSON
 
-show_archived = False
-
 user_cfg = 'user.cfg'
 
-DEBUGGING = True
-VERBOSE = False
-FIRST_RUN = False
-
+# ==============================================================================
+# Don't change anything below this line unless you know what you're doing
+# ==============================================================================
+#
 # Define the variables that can be set in the user.cfg file to override
-# the defaults
+# the defaults. These are the variables that the user can change in the
+# GUI. The user.cfg file is created in the same directory as the main
+# script when the user runs the application for the first time.
+
 user_config_vars = {
-    "show_archived": show_archived,
-    "first_run": FIRST_RUN
+    "DEBUGGING": DEBUGGING,
+    "VERBOSE": VERBOSE,
+    "FIRST_RUN": FIRST_RUN,
+    "SHOW_ARCHIVED": SHOW_ARCHIVED
 }

@@ -1,5 +1,5 @@
 # PostSearch - A simple Python application to search through your old
-# Tweets and Threads Posts from downloaded archive files.
+# Twitter and Threads posts from downloaded archive files.
 # Author: Tinda Zaszcek
 # Link: https://github.com/tinnyzaz/PostSearch
 # first_run.py
@@ -102,7 +102,7 @@ def convert_js_to_json(js_file_path, json_file_path):
         json_data = '{\n\t"my_tweets":' + data[start_index:] + '}'
         with open(json_file_path, 'w') as file:
             file.write(json_data)
-        debug.msg(f"Converted {js_file_path} to {json_file_path}")
+        debug.first(f"Converted {js_file_path} to {json_file_path}")
         return True
     except Exception as e:
         debug.error(f"Error converting {js_file_path} to {json_file_path}: {e}")
@@ -128,18 +128,29 @@ def run_first_time_setup():
     try:
         import_posts("threads")
     except Exception as e:
-        debug.warning(f"Importing threads not yet implemented.")
+        debug.first(f"Importing threads not yet implemented.")
         return
 
     # create a .cfg file called first_run.cfg and write False
     # to it so that the first_run.py script will not run again
-    try:    
-        debug.first("Creating first_run.cfg file...")
-        with open('first_run.cfg', 'w') as file:
-            file.write("False")
+    # try:    
+    #     debug.first("Creating first_run.cfg file...")
+    #     with open('first_run.cfg', 'w') as file:
+    #         file.write("False")
+    # except Exception as e:
+    #     debug.first(f"Error creating first_run.cfg file: {e}")
+    #     return
+    
+    debug.first("Setup completed successfully.")
+    # set FIRST_RUN to False in user.cfg
+    try:
+        # Open the file in write mode to overwrite existing content
+        with open(cfg.user_cfg, "w") as file:  
+            file.write(f"FIRST_RUN=FALSE\n")    # quick and dirty for now
+            # eventually we want to write the entire user config here.
+            debug.first(f"Updated {cfg.user_cfg}")
     except Exception as e:
-        debug.first(f"Error creating first_run.cfg file: {e}")
-        exit(1)
+        debug.error(f"Error saving {cfg.user_cfg}: {e}")
 
 # Run the setup when the module is run as a script
 if __name__ == "__main__":

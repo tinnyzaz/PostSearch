@@ -38,7 +38,7 @@ class DatabaseConnection:
         base_query = f"SELECT * FROM {cfg.table_name}"
         order_by = "ORDER BY created_at"
         search_condition = f"WHERE full_text LIKE '%{query}%'" if query else ""
-        archive_condition = "WHERE is_archived = 0" if not cfg.show_archived else ""
+        archive_condition = "WHERE is_archived = 0" if not cfg.SHOW_ARCHIVED else ""
     
         if search_condition and archive_condition:
             # Both conditions are present

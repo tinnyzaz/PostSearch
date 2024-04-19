@@ -1,3 +1,13 @@
+# PostSearch - A simple Python application to search through your old
+# Twitter and Threads posts from downloaded archive files. 
+# Author: Tinda Zaszcek
+# Link: https://github.com/tinnyzaz/PostSearch 
+# import_posts.py
+# 
+# This script will import the posts from a provided JSON file into the
+# database. It can be run on its own or it will run the first time the
+# app loads.
+
 import os
 import sqlite3
 import ijson
@@ -9,8 +19,7 @@ from database import DatabaseConnection
 def import_posts(source="twitter"):
     source = source.lower()
     if source == "twitter":
-        # jsonfile = os.path.join(cfg.post_archive_download_path, cfg.tweet_path, cfg.jsonfile_tweets)
-        jsonfile = "X:\\dev.pythonapps\\PostSearch\\PostSearch\\put-archive-zip-here\\twitter\\data\\tweets.json"
+        jsonfile = os.path.join(cfg.post_archive_download_path, cfg.tweet_path, cfg.jsonfile_tweets)
         # Before we do anything, let's make sure we have a JSON file to work with
         if not os.path.exists(jsonfile):
             debug.error(f"The file '{jsonfile}' does not exist.")
@@ -198,13 +207,6 @@ def import_posts(source="twitter"):
 #         # Commit any remaining changes
 #         db_conn.conn.commit()
 
-
-
-
-
-
-
-
 # A function to import a ZIP file and find the correct posts.txt file to import
 # TODO: Implement this function
 def import_zip(zipfile):
@@ -231,3 +233,6 @@ def import_zip(zipfile):
         debug.error("The tweets.js file was not found in the ZIP file.")
         # Exit the function
         return
+    
+if __name__ == '__main__':
+    import_posts()

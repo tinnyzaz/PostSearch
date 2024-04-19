@@ -1,5 +1,5 @@
-# self.postsearch - A simple Python application to search through your old
-# self.posts and Threads self.posts from downloaded archive files.
+# PostSearch - A simple Python application to search through your old
+# Twitter and Threads posts from downloaded archive files.
 # Author: Tinda Zaszcek
 # Link: https://github.com/tinnyzaz/PostSearch
 # gui.py
@@ -10,7 +10,8 @@ import sqlite3
 import debug
 import config as cfg
 
-from funcs import copy_post, save_user_config, load_user_config
+from funcs import ( copy_post, save_user_config, load_user_config, 
+                   check_first_run )
 
 class GUI:
     def __init__(self, db_conn):
@@ -23,12 +24,15 @@ class GUI:
     def create_gui(self):
         # Create a main window
         self.window = tk.Tk()  # Initialize the root window
-        # self.window = tk.Toplevel(self.root)
-        self.show_archived = tk.BooleanVar(value=False)
-        self.window.title("PostSearch")
+        
+        # self.SHOW_ARCHIVED = tk.BooleanVar(value=False)
+        self.window.title(cfg.WINDOW_TITLE)
         self.window.iconbitmap(cfg.ICON_PATH)
-        debug.verbose("Creating the main window...")
 
+        # Load the user config options
+        load_user_config(self) 
+    
+        debug.verbose("Creating the main window...")
         # Get the screen width and height
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
@@ -50,14 +54,22 @@ class GUI:
             self.window.grid_rowconfigure(i, weight=1)
         for i in range(8):
             self.window.grid_columnconfigure(i, weight=1)
-
-        debug.verbose("Loading user config options...")
-        # Load the user config options
-        load_user_config(self) # this doesn't do anything yet
         
-        # Create a BooleanVar variable for the Checkbutton widget
-        self.check_show_archived = tk.BooleanVar()
-        self.check_show_archived.set(cfg.show_archived)
+        # Check to see if this is the first time the app has run
+        check_first_run()
+        
+        # Create a BooleanVar variable for the DEBUGGING Checkbutton widget
+        self.check_DEBUGGING = tk.BooleanVar()
+        self.check_DEBUGGING.set(cfg.DEBUGGING)
+        # Create a BooleanVar variable for the VERBOSE Checkbutton widget
+        self.check_VERBOSE = tk.BooleanVar()
+        self.check_VERBOSE.set(cfg.VERBOSE)
+        # Create a BooleanVar variable for the FIRST_RUN Checkbutton widget
+        self.check_FIRST_RUN = tk.BooleanVar()
+        self.check_FIRST_RUN.set(cfg.FIRST_RUN)
+        # Create a BooleanVar variable for the SHOW_ARCHIVED Checkbutton widget
+        self.check_SHOW_ARCHIVED = tk.BooleanVar()
+        self.check_SHOW_ARCHIVED.set(cfg.SHOW_ARCHIVED)
 
         debug.verbose("Building the primary GUI contents...")
         # Create a Label widget for the search box
@@ -75,7 +87,6 @@ class GUI:
         self.clear_button = tk.Button(self.window, text="Clear", command=self.clear_search)
         self.clear_button.grid(row=0, column=7, sticky='e')
     
-        # Create Label widgets with a generic name in the corner cells
         # Label that will display the current post / total self.posts
         self.index_info = tk.StringVar()
         self.index_info.set("00000/00000")        
@@ -86,7 +97,9 @@ class GUI:
         self.meta_info.set("Meta Info")
         tk.Label(self.window, textvariable=self.meta_info).grid(row=1, column=1, columnspan=6, sticky='sw')
         # Label that will display whether the post is archived or not
-        tk.Label(self.window, text="Archived?").grid(row=1, column=7, sticky='s')
+        self.is_archived_label = tk.StringVar()
+        self.is_archived_label.set("🐵")
+        tk.Label(self.window, textvariable=self.is_archived_label, font=("Helvetica", 30)).grid(row=1, column=7, rowspan=2, sticky='n')
     
         # Create a Text widget with word wrapping
         self.post_text = tk.Text(self.window, wrap=tk.WORD)
@@ -94,34 +107,48 @@ class GUI:
     
         # Create a Previous button
         self.previous_button = tk.Button(self.window, text="Previous", command=self.previous_post)
-        self.previous_button.grid(row=4, column=0, sticky='w')
+        self.previous_button.grid(row=4, column=1, sticky='w')
     
         # Create a Copy button
         self.copy_button = tk.Button(self.window, text="Copy", command=lambda: copy_post(self.window, self.post_text.get()))
-        self.copy_button.grid(row=4, column=1)
+        self.copy_button.grid(row=4, column=2)
     
         # Create an Archive button
         self.archive_button_text = tk.StringVar()
-        self.archive_button_text.set("Archive")
+        self.archive_button_text.set("Hide Post")
         self.archive_button = tk.Button(self.window, text=self.archive_button_text, command=self.archive_post)
-        self.archive_button.grid(row=4, column=2)
+        self.archive_button.grid(row=4, column=3)
     
         # Create Refresh button
         self.populate_posts_button = tk.Button(self.window, text="Refresh", command=self.populate_posts)
-        self.populate_posts_button.grid(row=4, column=3)
+        self.populate_posts_button.grid(row=4, column=4)
     
         # Create a Show Thread button
         self.show_thread_button = tk.Button(self.window, text="Show Thread")
-        self.show_thread_button.grid(row=4, column=4)
+        self.show_thread_button.grid(row=4, column=5)
         self.show_thread_button.config(state=tk.DISABLED)
     
         # Create a Next button
         self.next_button = tk.Button(self.window, text="Next", command=self.next_post)
-        self.next_button.grid(row=4, column=5, sticky='e')
+        self.next_button.grid(row=4, column=6, sticky='e')
 
-        # Create a Checkbutton widget
-        self.show_archived_checkbutton = tk.Checkbutton(self.window, text="Show Archived", variable=self.show_archived)
-        self.show_archived_checkbutton.grid(row=4, column=6, sticky='e')
+        # These checkbuttons are disabled for now, but will toggle user config options
+        # Create a DEBUGGING Checkbutton widget
+        self.DEBUGGING_checkbutton = tk.Checkbutton(self.window, text="DEBUGGING", variable=self.check_DEBUGGING)
+        self.DEBUGGING_checkbutton.grid(row=5, column=1, sticky='e')
+        self.DEBUGGING_checkbutton.config(state=tk.DISABLED)
+        # Create a VERBOSE Checkbutton widget
+        self.VERBOSE_checkbutton = tk.Checkbutton(self.window, text="VERBOSE", variable=self.check_VERBOSE)
+        self.VERBOSE_checkbutton.grid(row=5, column=2, sticky='e')
+        self.VERBOSE_checkbutton.config(state=tk.DISABLED)
+        # Create a SHOW_ARCHIVED Checkbutton widget
+        self.SHOW_ARCHIVED_checkbutton = tk.Checkbutton(self.window, text="Show Hidden Posts", variable=self.check_SHOW_ARCHIVED)
+        self.SHOW_ARCHIVED_checkbutton.grid(row=5, column=3, sticky='e')
+        self.SHOW_ARCHIVED_checkbutton.config(state=tk.DISABLED)
+        # Create a FIRST_RUN Checkbutton widget
+        self.FIRST_RUN_checkbutton = tk.Checkbutton(self.window, text="First Run", variable=self.check_FIRST_RUN)
+        self.FIRST_RUN_checkbutton.grid(row=5, column=4, sticky='e')
+        self.FIRST_RUN_checkbutton.config(state=tk.DISABLED)
 
         self.populate_posts()
         # Show the first post
@@ -159,20 +186,20 @@ class GUI:
     # Get the is_archive flag of the current post
     def post_is_archived(self):
         try:
-            self.db.execute(f"SELECT self.is_archived FROM {cfg.table_name} WHERE full_text = ?", (self.posts[self.index],))
-            return self.db.fetchone()[0]
+            self.db_conn.db.execute(f"SELECT self.is_archived FROM {cfg.table_name} WHERE full_text = ?", (self.posts[self.index],))
+            return self.db_conn.db.fetchone()[0]
         except sqlite3.Error as e:
             debug.error(f"Error getting self.is_archived flag: {e}")
             return False
 
     # Function to change the text of the Archive button
-    def archive_button_check(self):
+    def archive_button_check(self, postarchived=False):
         # TODO: this function is not working
-        self.archive_button.config(text="Restore" if self.is_archived else "Archive")
-        if self.is_archived:
-            temp_text = "Restore"
+        self.archive_button.config(text="Unhide Post" if self.is_archived else "Hide Post")
+        if postarchived:
+            temp_text = "Show Post"
         else:
-            temp_text = "Archive"
+            temp_text = "Hide Post"
         self.archive_button_text.set(f"{temp_text}")
 
     # Function to show the current post
@@ -186,11 +213,21 @@ class GUI:
             self.post_text.insert(tk.END, self.posts[self.index][2])
             debug.msg(f"Showing post {self.index+1}/{len(self.posts)}")
             # Update the self.index info
-            self.index_info.set(f"{self.index+1}/{len(self.posts)}")
+            self.index_info.set(f"{self.index+1:05}/{len(self.posts):05}")
             # Update the meta info
-            self.meta_info.set("Meta Info Placeholder")
-            # Update the Archive button text
-            self.archive_button_check()
+            postid = self.posts[self.index][0]
+            postdate = self.posts[self.index][1]
+            postfavs = self.posts[self.index][3]
+            postreply = self.posts[self.index][4]
+            postarchived = self.posts[self.index][5]
+
+            if postreply:
+                postreplyto = f"| Reply to {postreply}"
+            else:
+                postreplyto = ""
+            self.meta_info.set(f"ID: {postid} | {postdate} | 💜{postfavs} {postreplyto}")
+            # Update the Archive button text using 🙈 and 🐵
+            self.archive_button_check(postarchived)
             debug.msg(f"Updated the labels")
         else:
             debug.msg("No posts to show.")
@@ -221,12 +258,12 @@ class GUI:
         # Toggle the self.is_archived flag in the database
         try:
             # First, get the current state of self.is_archived for the post
-            self.db.execute(f"SELECT self.is_archived FROM {cfg.table_name} WHERE full_text = ?", (current_post,))
-            self.is_archived = self.db.fetchone()[0]
+            self.db_conn.db.execute(f"SELECT self.is_archived FROM {cfg.table_name} WHERE full_text = ?", (current_post,))
+            self.is_archived = self.db_conn.db.fetchone()[0]
             # Then, toggle the self.is_archived flag
             self.is_archived = not bool(self.is_archived)
-            self.db.execute(f"UPDATE {cfg.table_name} SET self.is_archived = ? WHERE full_text = ?", (self.is_archived, current_post))
-            self.conn.commit()
+            self.db_conn.db.execute(f"UPDATE {cfg.table_name} SET self.is_archived = ? WHERE full_text = ?", (self.is_archived, current_post))
+            self.db_conn.conn.commit()
             debug.msg(f"Toggled archive state for post: {current_post}")
             # Update the text of the Archive button
             self.archive_button_text(self.is_archived)

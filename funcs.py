@@ -14,20 +14,7 @@ def check_first_run():
             debug.msg("First run detected.")
             run_first_time_setup()
             return
-        # # Check if the first run check file exists
-        # if os.path.exists(cfg.first_run_check_cfg):
-        #     debug.msg(f"First run check file found: {cfg.first_run_check_cfg}")
-        #     # Check the contents of the first run check file
-        #     with open(cfg.first_run_check_cfg, "r") as file:
-        #         verify_first_run = file.read().strip()
-        #         if verify_first_run == "False":
-        #             # We're looking for the string "False" to verify the first run check file
-        #             debug.msg("First run check file found and verified.")
-        #             return False
-        # If the file does not exist or does not contain "False", run the first run setup
-        # debug.msg(f"First run check file not found or not verified: {cfg.first_run_check_cfg}")
-        # run_first_time_setup()
-        # return
+        debug.msg("Not the first run.")
     except Exception as e:
         debug.error(f"Error checking first run: {e}")
         return
@@ -59,20 +46,23 @@ def save_user_config(self):
 
 # Function to load user config options
 def load_user_config(self):
-    # try:
-    #     with open(cfg.user_cfg, "r") as file:
-    #         for line in file:
-    #             # Skip lines that do not contain an equals sign
-    #             if "=" not in line:
-    #                 continue
-    #             # Split the line into name and value
-    #             name, value = line.split("=")
-    #             # Strip leading and trailing whitespace from the value
-    #             value = value.strip()
-    #             # Update the corresponding attribute in the cfg dictionary
-    #             if name in self.userconfig:
-    #                 self.userconfig[name].set(value)
-    #                 debug.verbose(f"Loaded user config: {name}={value}")
-    # except Exception as e:
-    #     debug.error(f"Error loading user config: {e}")
-    pass
+    # Create a state dictionary to hold the user config options
+    self.state = {}
+    # Open the user config file
+    try:
+        debug.info(f"Loading custom configuration from {cfg.user_cfg}")
+        with open(cfg.user_cfg, "r") as file:
+            # Read the file line by line
+            for line in file:
+                # Split the line into a key-value pair
+                key, value = line.strip().split("=")
+                # Add the key-value pair to the state dictionary
+                self.state[key] = value
+                # Overwrite the default value with the user config value
+                # if the key exists in the user config
+                cfg.user_config_vars[key] = value
+                debug.msg(f"Overwrote default value for {key} with {cfg.user_config_vars[key]}")
+    except Exception as e:
+        debug.error(f"Error loading user config: {e}")
+        return
+
