@@ -23,7 +23,7 @@ def warning(*args):
 def error(*args):
     try:
         # get frame info
-        frame_info = inspect.stack()[-1]
+        frame_info = inspect.stack()[-2]
         # get line number
         lineno = frame_info.lineno
         # get function name

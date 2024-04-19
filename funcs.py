@@ -39,3 +39,34 @@ def copy_post(window, post_text):
         debug.info("Copied post to clipboard")
     except tk.TclError as e:
         debug.error(f"Error copying post to clipboard: {e}")
+
+# Function to save user config options
+def save_user_config(self):
+    try:
+        # Open the file in write mode to overwrite existing content
+        with open(cfg.user_cfg, "w") as file:  
+            for option_name, option_var in self.userconfig.items():
+                option_phrase = f"{option_name}={option_var.get()}"
+                file.write(f"{option_phrase}\n")
+                debug.info(f"Saved {option_phrase} to {cfg.user_cfg}")
+    except Exception as e:
+        debug.error(f"Error saving user config: {e}")
+
+# Function to load user config options
+def load_user_config(self):
+    try:
+        with open(cfg.user_cfg, "r") as file:
+            for line in file:
+                # Skip lines that do not contain an equals sign
+                if "=" not in line:
+                    continue
+                # Split the line into name and value
+                name, value = line.split("=")
+                # Strip leading and trailing whitespace from the value
+                value = value.strip()
+                # Update the corresponding attribute in the cfg dictionary
+                if name in self.userconfig:
+                    self.userconfig[name].set(value)
+                    debug.verbose(f"Loaded user config: {name}={value}")
+    except Exception as e:
+        debug.error(f"Error loading user config: {e}")

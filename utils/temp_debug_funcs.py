@@ -10,8 +10,8 @@ if cfg.DEBUGGING:
     try:
         if os.path.exists(cfg.first_run_check_cfg):
             os.remove(cfg.first_run_check_cfg)
-            debug.msg(f"Deleted {cfg.first_run_check_cfg}")
+            debug.first(f"Deleted {cfg.first_run_check_cfg}")
         else:
-            debug.msg(f"{cfg.first_run_check_cfg} file not found. This is probably the first run.")
+            debug.first(f"{cfg.first_run_check_cfg} file not found. This is probably the first run.")
     except Exception as e:
-        debug.msg(f"Problem deleting first_run_check_cfg file: {e}")
+        debug.first(f"Problem deleting first_run_check_cfg file: {e}")

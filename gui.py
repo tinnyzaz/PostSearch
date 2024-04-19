@@ -10,7 +10,7 @@ import sqlite3
 import debug
 import config as cfg
 
-from funcs import copy_post
+from funcs import copy_post, save_user_config, load_user_config
 from database import DatabaseConnection
 
 class GUI:
@@ -22,11 +22,17 @@ class GUI:
         self.index = 0
         self.is_archived = False
         self.create_gui()
+        # Define your configuration options in a dictionary
+        self.userconfig = {
+            'using_config': True,
+            'show_archived': tk.BooleanVar(value=False),
+        }
 
     def create_gui(self):
         # Create a main window
         self.window = tk.Tk()
         self.window.title("PostSearch")
+        self.window.iconbitmap(cfg.ICON_PATH)
         debug.verbose("Creating the main window...")
 
         # Get the screen width and height
@@ -34,8 +40,8 @@ class GUI:
         screen_height = self.window.winfo_screenheight()
 
         # Define the window size
-        window_width = 800
-        window_height = 600
+        window_width = cfg.WINDOW_WIDTH
+        window_height = cfg.WINDOW_HEIGHT
 
         # Calculate the position to center the window
         position_top = int(screen_height / 2 - window_height / 2)
@@ -50,6 +56,14 @@ class GUI:
             self.window.grid_rowconfigure(i, weight=1)
         for i in range(8):
                 self.window.grid_columnconfigure(i, weight=1)
+
+        debug.verbose("Loading user config options...")
+        # Load the user config options
+        load_user_config() 
+        
+        # Create a BooleanVar variable for the Checkbutton widget
+        self.check_show_archived = tk.BooleanVar()
+        self.check_show_archived.set(cfg.show_archived)
 
         debug.verbose("Building the primary GUI contents...")
         # Create a Label widget for the search box
@@ -110,10 +124,11 @@ class GUI:
         # Create a Next button
         self.next_button = tk.Button(self.window, text="Next", command=self.next_post)
         self.next_button.grid(row=4, column=5, sticky='e')
-    
+
         # Create a Checkbutton widget
-        self.show_archived_checkbutton = tk.Checkbutton(self.window, text="Show Archived", variable=cfg.show_archived)
+        self.show_archived_checkbutton = tk.Checkbutton(self.window, text="Show Archived", variable=self.show_archived)
         self.show_archived_checkbutton.grid(row=4, column=6, sticky='e')
+
         debug.verbose("Populating the post list...")
         # Populate the self.posts list
         self.refresh_posts()
@@ -134,15 +149,17 @@ class GUI:
 
     # Call the get_posts function and store the results in a list
     def refresh_posts(self):
+        # save the Show Archived setting to user.cfg
+        save_user_config(cfg.show_archived.__name__, self.show_archived.get())
+        debug.msg("Refreshing posts list...")
         self.posts = [post[0] for post in self.db_conn.get_posts()]
-        debug.msg(f"Fetched {len(self.posts)} self.posts from database")
     
     def search_posts(self):
         query = self.search_entry.get()
         if query:
             debug.msg(f"Searching for self.posts with: {query}")
             self.posts = [post[0] for post in self.db_conn.get_posts(query)]
-            debug.info(f"Found {len(self.posts)} self.posts with: {query}")
+            debug.info(f"Found {len(self.posts)} posts with: {query}")
             # Show the first post
             self.show_post()
         else:

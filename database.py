@@ -50,7 +50,7 @@ class DatabaseConnection:
         base_query = f"SELECT full_text FROM {cfg.table_name}"
         order_by = "ORDER BY created_at"
         search_condition = f"WHERE full_text LIKE '%{query}%'" if query else ""
-        archive_condition = "WHERE is_archived = 0" if not cfg.show_archived else ""
+        archive_condition = "WHERE is_archived = 0" if not self.show_archived else ""
 
         if search_condition and archive_condition:
             # Both conditions are present
@@ -70,3 +70,4 @@ class DatabaseConnection:
             return self.db.fetchall()
         except sqlite3.Error as e:
             debug.error(f"Error executing SQL query: {e}")
+            return []

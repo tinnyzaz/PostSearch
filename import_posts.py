@@ -9,6 +9,12 @@ from database import DatabaseConnection
 def import_posts(source="twitter"):
     source = source.lower()
     if source == "twitter":
+        jsonfile = os.join(cfg.tweet_path, cfg.jsonfile_tweets)
+        # Before we do anything, let's make sure we have a JSON file to work with
+        if not os.path.exists(jsonfile):
+            debug.error(f"The file '{jsonfile}' does not exist.")
+            exit(1)
+        # OK let's mosey!
         # Connect to the database
         with DatabaseConnection() as (conn, db):
             try:
@@ -41,16 +47,16 @@ def import_posts(source="twitter"):
                     debug.msg(f"Created the '{cfg.table_name}' table successfully.")
 
                 # Check if the JSON file exists
-                if not os.path.exists(f'{cfg.jsonfile_tweets}'):
-                    debug.error(f"The file '{cfg.jsonfile_tweets}' does not exist.")
+                if not os.path.exists(f'{jsonfile}'):
+                    debug.error(f"The file '{jsonfile}' does not exist.")
                 else:
                     # Open the JSON file in streaming mode with UTF-8 encoding
-                    with open(f'{cfg.jsonfile_tweets}', 'r', encoding='utf-8') as file:
+                    with open(f'{jsonfile}', 'r', encoding='utf-8') as file:
                         # Use ijson to parse the JSON file stream
                         objects = ijson.items(file, f'my_tweets.item.post') # TODO: This will need to be updated based on the JSON structure
 
                         new_posts = 0  # Initialize the counter
-
+                        debug.msg("Processing the JSON file...")
                         for i, post in enumerate(objects):
                             # Check if the required keys are in the post object
                             if 'id_str' in post and 'created_at' in post and 'full_text' in post and 'favorite_count' in post:
@@ -122,7 +128,7 @@ def import_zip(zipfile):
                 # Extract the tweets.js file
                 zip.extract(file)
                 # Set the JSON file to the extracted file
-                cfg.jsonfile_tweets = file
+                jsonfile = file
                 # Run the import_posts function
                 import_posts()
                 # Exit the function
