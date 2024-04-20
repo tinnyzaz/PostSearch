@@ -20,6 +20,8 @@ import config as cfg
 # Define the paths for the archive directory and the JS and JSON files
 archive_dir = cfg.post_archive_download_path
 
+debug.first(f"TODO: Are we creating & populating the user.cfg file here?")
+
 def find_archive_dir():
     # Check if the user has the required archive files
     if not os.path.exists(archive_dir):

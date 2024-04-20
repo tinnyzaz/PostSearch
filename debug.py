@@ -4,10 +4,10 @@
 # Link: https://github.com/tinnyzaz/PostSearch
 # debug.py
 
-import os
-import inspect
+import os, traceback, inspect
 
 import config as cfg
+from app_state import state
 
 def msg(*args):
     if cfg.DEBUGGING:
@@ -22,18 +22,23 @@ def warning(*args):
 
 def error(*args):
     try:
-        # get frame info
-        frame_info = inspect.stack()[0]
-        # get line number
-        lineno = frame_info.lineno
-        # get function name
-        script_name = os.path.basename(frame_info.filename)
-        error_location = f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args, f"at line {lineno} in {script_name}"
-        error_location = " ".join(error_location)
-        print(error_location)
-        print(frame_info)
+        tb = traceback.format_exc()
+        print(f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args, "\n", tb)
     except Exception as e:
         print(f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args)
+    # try:
+    #     # get frame info
+    #     frame_info = inspect.stack()[0]
+    #     # get line number
+    #     lineno = frame_info.lineno
+    #     # get function name
+    #     script_name = os.path.basename(frame_info.filename)
+    #     error_location = f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args, f"at line {lineno} in {script_name}"
+    #     error_location = " ".join(error_location)
+    #     print(error_location)
+    #     print(frame_info)
+    # except Exception as e:
+    #     print(f"{cfg.ORANGE}ERROR:{cfg.RESET}", *args)
 
 def info(*args):
     print(f"{cfg.NEON_GREEN}INFO:{cfg.RESET}", *args)

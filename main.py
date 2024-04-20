@@ -5,12 +5,15 @@
 # main.py
 
 import debug
-import config as cfg
 
+from app_state import state
 from gui import GUI
 from database import DatabaseConnection
+from utils.shortcuts import try_this
 
 def main():
+    # Loading user preferences
+    try_this(state.load_user_config)
     debug.msg("Starting the main script...")
     # Connect to the database
     # try:        
@@ -27,13 +30,13 @@ def main():
         debug.msg("Main script completed. Great job!")
 
 # ==============================================================================
-if cfg.DEBUGGING:
-    try:
-        import utils.temp_debug_funcs
-    except Exception as e:
-        debug.error(f"An error occurred: {e}")
-    else:
-        debug.msg("Temporary debug functions completed. Great job!")
+# if state.DEBUGGING:
+#     try:
+#         import utils.temp_debug_funcs
+#     except Exception as e:
+#         debug.error(f"An error occurred: {e}")
+#     else:
+#         debug.msg("Temporary debug functions completed. Great job!")
 # ==============================================================================
 
 if __name__ == "__main__":

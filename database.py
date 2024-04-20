@@ -1,7 +1,9 @@
 import sqlite3
 
 import debug
+from app_state import state
 import config as cfg
+from utils.shortcuts import try_this
 
 class DatabaseConnection:
     def __init__(self):
@@ -31,8 +33,10 @@ class DatabaseConnection:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.conn:
-            self.conn.close()
-            debug.msg("Closed the database connection successfully.")
+            if try_this(self.conn.close):
+                debug.msg("Closed the database connection successfully.")
+            else:
+                debug.error("Error closing the database connection.")
         
     def get_posts(self, query=None):
         base_query = f"SELECT * FROM {cfg.table_name}"

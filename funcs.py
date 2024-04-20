@@ -1,5 +1,9 @@
+# PostSearch - A simple Python application to search through your old
+# Twitter and Threads posts from downloaded archive files.
+# Author: Tinda Zaszcek
+# Link: https://github.com/tinnyzaz/PostSearch
 # funcs.py
-import os
+
 import tkinter as tk
 
 import debug
@@ -44,25 +48,39 @@ def save_user_config(self):
     #     debug.error(f"Error saving user config: {e}")
     pass
 
-# Function to load user config options
-def load_user_config(self):
-    # Create a state dictionary to hold the user config options
-    self.state = {}
-    # Open the user config file
-    try:
-        debug.info(f"Loading custom configuration from {cfg.user_cfg}")
-        with open(cfg.user_cfg, "r") as file:
-            # Read the file line by line
-            for line in file:
-                # Split the line into a key-value pair
-                key, value = line.strip().split("=")
-                # Add the key-value pair to the state dictionary
-                self.state[key] = value
-                # Overwrite the default value with the user config value
-                # if the key exists in the user config
-                cfg.user_config_vars[key] = value
-                debug.msg(f"Overwrote default value for {key} with {cfg.user_config_vars[key]}")
-    except Exception as e:
-        debug.error(f"Error loading user config: {e}")
-        return
+# # Function to load user config options
+# def load_user_config(self):
+#     # Create a state dictionary to hold the user config options
+#     self.state = {}
+#     # Open the user config file
+#     try:
+#         debug.info(f"Loading custom configuration from {cfg.user_cfg}")
+#         with open(cfg.user_cfg, "r") as file:
+#             # Read the file line by line
+#             for line in file:
+#                 # Split the line into a key-value pair
+#                 key, value = line.strip().split("=")
+#                 # Add the key-value pair to the state dictionary
+#                 self.state[key] = value
+#                 # Overwrite the default value with the user config value
+#                 # if the key exists in the user config
+#                 cfg.user_config_vars[key] = value
+#                 debug.msg(f"Overwrote default value for {key} with {cfg.user_config_vars[key]}")
+#     except Exception as e:
+#         debug.error(f"Error loading user config: {e}")
+#         return
 
+def create_options_checkboxes(window, option_names=None, start_row=5, column_positions=None):
+    if option_names is None:
+        option_names = cfg.USER_OPTIONS
+    if column_positions is None:
+        column_positions = [1, 2, 3, 4]
+    checkboxes = {}
+    for i, name in enumerate(option_names):
+        check_var = tk.BooleanVar()
+        check_var.set(getattr(cfg, name))
+        checkbox = tk.Checkbutton(window, text=name, variable=check_var)
+        checkbox.grid(row=start_row, column=column_positions[i], sticky='e')
+        checkbox.config(state=tk.DISABLED)
+        checkboxes[name] = checkbox
+    return checkboxes

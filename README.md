@@ -1,5 +1,5 @@
 
-### PostSearch by Tinda Zaszcek v0.1.0
+### PostSearch by Tinda Zaszcek
 
 #### A simple graphical user interface to search through your old social media posts.  
 
@@ -19,4 +19,4 @@ gems on whatever new social media service you end up migrating to.
 
 This is a work in progress; it doesn't work very well yet!
 
-![PostSearch GUI v0.1.0](/assets/postsearch_gui_v0.1.0.png)
+![PostSearch GUI](/assets/postsearch_gui.png)
