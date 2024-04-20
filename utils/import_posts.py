@@ -14,7 +14,7 @@ import ijson
 
 import debug
 import config as cfg
-from database import DatabaseConnection
+from utils.database import DatabaseConnection
 
 def import_posts(source="twitter"):
     source = source.lower()

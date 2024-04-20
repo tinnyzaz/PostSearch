@@ -8,7 +8,7 @@ import debug
 
 from app_state import state
 from gui import GUI
-from database import DatabaseConnection
+from utils.database import DatabaseConnection
 from utils.shortcuts import try_this
 
 def main():
@@ -18,7 +18,7 @@ def main():
     # Connect to the database
     # try:        
     with DatabaseConnection() as db_conn:
-        # Start the GUI script 
+        # Start the GUI script  
         debug.info("Starting the GUI...")
         GUI(db_conn)
         debug.info("Closing GUI...")

@@ -14,7 +14,7 @@ import zipfile
 from pathlib import Path
 
 import debug
-from import_posts import import_posts
+from utils.import_posts import import_posts
 import config as cfg
 
 # Define the paths for the archive directory and the JS and JSON files

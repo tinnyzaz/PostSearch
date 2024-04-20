@@ -9,7 +9,7 @@ import tkinter as tk
 import debug
 import config as cfg
 
-from first_run import run_first_time_setup
+from utils.first_run import run_first_time_setup
 
 def check_first_run():
     debug.msg("Checking if this is the first run...")
