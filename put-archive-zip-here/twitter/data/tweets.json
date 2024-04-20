@@ -1,4 +1,5 @@
-window.YTD.tweets.part0 = [
+{
+  "my_tweets":[
   {
     "tweet": {
       "edit_info": {
@@ -509,4 +510,4 @@ window.YTD.tweets.part0 = [
       "in_reply_to_user_id_str": "6783e145-cc27-495a-9c58-c6458db5ac25"
     }
   }
-]
+]}
